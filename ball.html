@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		*{margin: 0;padding: 0;}
+		canvas{
+			border:1px solid red;
+			display: block;
+			margin: 50px auto;
+		}
+	</style>
+</head>
+<body>
+	<canvas width="900" height="500">canvas是H5新标签，当前浏览器不支持，请更换</canvas>
+</body>
+<script type="text/javascript" src="./lib/util.js"></script>
+<script type="text/javascript">
+		function Ball(options){
+			this._init(options);
+		}
+		Ball.prototype = {
+			constructor:Ball,
+			_init:function(options){
+				options = options || {};
+				this.centerX = options.centerX || 0;
+				this.centerY = options.centerY || 0;
+				this.radius = options.radius || 0;
+				this.startDegree = options.startDegree || 0;
+				this.endDegree = options.endDegree || 360;
+				this.strokeStyle = options.strokeStyle || "#FFF";
+				this.lineWidth = options.lineWidth || 1;
+				this.fillStyle = options.fillStyle || "#FFF";
+				this.isCounterClockWise = options.isCounterClockWise || false;
+				this.speed=options.speed || 1;
+				this.direction =options.direction || 1;
+			},
+			update:function(ctx,canvas){
+				this.radius -= this.speed;
+				this.centerX -= this.speed*this.direction;
+				if(this.radius<0){
+					var index=balls.indexOf(this);
+					balls.splice(index,1);
+				}
+			},
+			render:function(ctx){
+				ctx.beginPath();
+			
+					ctx.arc(
+						this.centerX,
+						this.centerY,
+						this.radius,
+						this.startDegree * Math.PI/180,
+						this.endDegree * Math.PI/180,
+						this.isCounterClockWise
+					);
+					ctx.strokeStyle = this.strokeStyle;
+					ctx.lineWidth = this.lineWidth;
+					ctx.fillStyle = this.fillStyle;
+					// 再来进行填充
+					ctx.stroke();
+					ctx.fill();
+			},
+			clearCanvas:function(canvas){
+				canvas.width = canvas.width;
+				canvas.height = canvas.height;
+			}
+
+		};
+
+
+	</script>
+	<script type="text/javascript">
+		var canvas = document.querySelector("canvas");
+		var ctx = canvas.getContext("2d");
+		var balls=[];
+		// console.log(times);
+		var times;
+		canvas.onmousemove=function(e){
+			times=randomInt(50)+5
+			var x=e.offsetX;
+			var y=e.offsetY;
+			for(var i=0;i<times;i++){
+				var ball = new Ball({
+					centerX : x,
+					centerY : y,
+					radius : randomInt(30),
+					lineWidth : randomInt(20),
+					fillStyle : randomColor(),
+					strokeStyle: randomColor()
+				});
+			balls.push(ball);
+			}
+			if(timer==null){
+				startTime();
+			}
+		}
+			for(var i in balls){
+				balls[i].render(ctx,canvas);
+			};
+
+			var timer;
+		function startTime(){
+			timer=setInterval(function(){
+				for(var i in balls){
+					balls[i].update(ctx,canvas);
+				}
+				console.log(111);
+				if(balls.length==0){
+					clearInterval(timer);
+					timer=null;
+				}
+				clearPath(canvas);
+				for(var i in balls){
+					balls[i].render(ctx,canvas);
+				}
+					
+			},60);
+		}
+		// var ball = new Ball({
+		// 	centerX : canvas.width/2,
+		// 	centerY : canvas.height/2,
+		// 	radius : 100,
+		// 	lineWidth : 0,
+		// 	fillStyle : "red"
+		// });
+		// ball.render(ctx,canvas);
+
+
+		// var fall = new Ball({
+		// 	centerX : canvas.width/2-150,
+		// 	centerY : canvas.height/2-150,
+		// 	radius : 100,
+		// 	lineWidth : 0,
+		// 	fillStyle : "#3FF1D2"
+		// });
+		// fall.render(ctx,canvas);
+		
+		// balls.push(ball);
+		// balls.push(fall);
+
+		// for(var i in balls){
+		// 	balls[i].render(ctx,canvas);
+		// }
+
+		// setInterval(function(){
+		// 	clearPath(canvas);
+		// 	for(var i in balls){
+		// 		balls[i].update(ctx,canvas);
+		// 	}
+				
+		// },10);
+
+		function clearPath(canvas){
+			canvas.width = canvas.width;
+			canvas.height = canvas.height;
+		}
+
+		function randomInt(num){
+			return parseInt(Math.random()*num);
+
+		}
+
+		function randomColor(){
+			var colorEles=["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"];
+			var color="#";
+			for(var i=0;i<6;i++){
+				color+=colorEles[randomInt(colorEles.length)];
+			}
+				return color
+		}
+
+	</script>
+
+</html>
